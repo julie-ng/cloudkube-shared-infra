@@ -10,9 +10,7 @@
 *.tfstate.backup
 *.lock.hcl
 
-certs/
-!certs/.gitkeep
-!certs/README.md
+certs/*
 
 *.cert
 *.key
