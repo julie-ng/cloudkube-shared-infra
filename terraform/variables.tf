@@ -27,3 +27,7 @@ variable "key_vault_sku" {}
 variable "key_vault_soft_delete_retention_days" {}
 variable "key_vault_purge_protection_enabled" {}
 variable "key_vault_enable_rbac_authorization" {}
+
+variable "tls_cert_name" {}
+variable "tls_cert_issuer" {}
+variable "tls_cert_path" {}

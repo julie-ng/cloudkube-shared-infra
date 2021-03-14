@@ -61,3 +61,29 @@ resource "azurerm_role_assignment" "admin" {
   principal_id         = data.azurerm_client_config.current.object_id
   scope                = azurerm_key_vault.kv.id
 }
+
+resource "azurerm_key_vault_certificate" "tls_star" {
+  name         = var.tls_cert_name
+  key_vault_id = azurerm_key_vault.kv.id
+
+  certificate {
+    contents = filebase64(var.tls_cert_path)
+  }
+
+  certificate_policy {
+    issuer_parameters {
+      name = var.tls_cert_issuer
+    }
+
+    key_properties {
+      exportable = true
+      key_size   = 2048
+      key_type   = "RSA"
+      reuse_key  = false
+    }
+
+    secret_properties {
+      content_type = "application/x-pem-file"
+    }
+  }
+}
