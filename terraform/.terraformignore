@@ -11,4 +11,5 @@ secrets.tf
 certs/*
 *.cert
 *.key
+*.pem
 *.pfx
