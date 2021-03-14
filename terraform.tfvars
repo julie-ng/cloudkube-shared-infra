@@ -23,4 +23,4 @@ key_vault_soft_delete_retention_days = 7     # minimum
 
 tls_cert_name   = "wildcard-onazureio"
 tls_cert_issuer = "Unknown"
-tls_cert_path 	= "./../certs/combined_star_onazure_io.pem"
+tls_cert_path 	= "./certs/combined_star_onazure_io.pem"
