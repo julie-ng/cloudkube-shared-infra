@@ -55,3 +55,9 @@ resource "azurerm_key_vault" "kv" {
   tags                       = var.default_tags
   enable_rbac_authorization  = var.key_vault_enable_rbac_authorization
 }
+
+resource "azurerm_role_assignment" "admin" {
+  role_definition_name = "Key Vault Administrator"
+  principal_id         = data.azurerm_client_config.current.object_id
+  scope                = azurerm_key_vault.kv.id
+}
