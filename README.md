@@ -7,7 +7,7 @@ Terraform scripts which create/manage the following:
 - DNS Zone
 - Storage Account
 
-See [terraform.tfvars](./terraform/terraform.tfvars) for details.
+See `terraform.tfvars` for details.
 
 ## References
 
