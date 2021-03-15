@@ -49,6 +49,18 @@ resource "azurerm_dns_cname_record" "appservice_node_demo_dev" {
   record              = "azure-nodejs-demo-dev.azurewebsites.net"
 }
 
+resource "azurerm_dns_mx_record" "hover_forward" {
+  name                = "@"
+  zone_name           = azurerm_dns_zone.onazureio.name
+  resource_group_name = azurerm_resource_group.shared_rg.name
+  ttl                 = 900
+
+  record {
+    preference = 10
+    exchange   = "mx.hover.com.cust.hostedemail.com"
+  }
+}
+
 # Container Registry
 # ------------------
 
