@@ -32,6 +32,22 @@ resource "azurerm_dns_zone" "onazureio" {
   resource_group_name = azurerm_resource_group.shared_rg.name
 }
 
+resource "azurerm_dns_cname_record" "appservice_node_demo" {
+  name                = "nodejs-demo"
+  zone_name           = azurerm_dns_zone.onazureio.name
+  resource_group_name = azurerm_resource_group.shared_rg.name
+  ttl                 = 300
+  record              = "azure-nodejs-demo.azurewebsites.net"
+}
+
+resource "azurerm_dns_cname_record" "appservice_node_demo_dev" {
+  name                = "nodejs-demo-dev"
+  zone_name           = azurerm_dns_zone.onazureio.name
+  resource_group_name = azurerm_resource_group.shared_rg.name
+  ttl                 = 300
+  record              = "azure-nodejs-demo-dev.azurewebsites.net"
+}
+
 # Container Registry
 # ------------------
 
@@ -86,6 +102,8 @@ resource "azurerm_key_vault_certificate" "tls_star" {
   }
 
   certificate_policy {
+    # Note: Issuer name must be 'Self' or 'Unknown' per Docs
+    # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_certificate
     issuer_parameters {
       name = var.tls_cert_issuer
     }
