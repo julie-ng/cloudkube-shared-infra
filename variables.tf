@@ -31,3 +31,5 @@ variable "key_vault_enable_rbac_authorization" {}
 variable "tls_cert_name" {}
 variable "tls_cert_issuer" {}
 variable "tls_cert_path" {}
+
+variable "dev_cluster_public_ip" {}

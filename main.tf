@@ -40,6 +40,22 @@ resource "azurerm_dns_zone" "onazureio" {
   tags                = var.default_tags
 }
 
+resource "azurerm_dns_a_record" "dev_cluster" {
+  name                = "dev"
+  zone_name           = azurerm_dns_zone.onazureio.name
+  resource_group_name = azurerm_resource_group.shared_rg.name
+  ttl                 = 300
+  records             = [var.dev_cluster_public_ip]
+}
+
+resource "azurerm_dns_a_record" "dev_cluster_wildcard" {
+  name                = "*.dev"
+  zone_name           = azurerm_dns_zone.onazureio.name
+  resource_group_name = azurerm_resource_group.shared_rg.name
+  ttl                 = 300
+  records             = [var.dev_cluster_public_ip]
+}
+
 resource "azurerm_dns_cname_record" "appservice_node_demo" {
   name                = "nodejs-demo"
   zone_name           = azurerm_dns_zone.onazureio.name
