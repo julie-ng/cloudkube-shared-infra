@@ -1,5 +1,11 @@
 location            = "centralus"
 resource_group_name = "onazureio-shared-rg"
+default_tags = {
+  public = "true"
+  demo   = "true"
+  env    = "prod"
+  iac    = "terraform"
+}
 
 # DNS
 dns_zone_name = "onazure.io"
@@ -23,4 +29,4 @@ key_vault_soft_delete_retention_days = 7     # minimum
 
 tls_cert_name   = "wildcard-onazureio"
 tls_cert_issuer = "Unknown"
-tls_cert_path 	= "./certs/combined_star_onazure_io.pem"
+tls_cert_path   = "./certs/combined_star_onazure_io.pem"

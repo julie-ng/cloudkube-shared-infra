@@ -30,6 +30,7 @@ resource "azurerm_resource_group" "shared_rg" {
 resource "azurerm_dns_zone" "onazureio" {
   name                = var.dns_zone_name
   resource_group_name = azurerm_resource_group.shared_rg.name
+  tags                = var.default_tags
 }
 
 resource "azurerm_dns_cname_record" "appservice_node_demo" {
