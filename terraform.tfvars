@@ -32,4 +32,4 @@ tls_cert_issuer = "Unknown"
 tls_cert_path   = "./certs/combined_star_onazure_io.pem"
 
 # AKS
-dev_cluster_public_ip = "52.154.48.227"
+dev_cluster_public_ip = "13.86.98.114"
