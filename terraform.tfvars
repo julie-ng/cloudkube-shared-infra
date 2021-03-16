@@ -27,9 +27,16 @@ key_vault_purge_protection_enabled   = false # so we can fully delete it
 key_vault_soft_delete_retention_days = 7     # minimum
 
 # TLS
-tls_cert_name   = "wildcard-onazureio"
-tls_cert_issuer = "Unknown"
-tls_cert_path   = "./certs/combined_star_onazure_io.pem"
+tls_certificates = {
+  root = {
+    name      = "wildcard-onazureio"
+    cert_path = "./certs/combined_star_onazure_io.pem"
+  },
+  dev = {
+    name      = "wildcard-dev-onazureio"
+    cert_path = "./certs/combined_star_dev_onazure_io.pem"
+  }
+}
 
 # AKS
 dev_cluster_public_ip = "13.86.98.114"

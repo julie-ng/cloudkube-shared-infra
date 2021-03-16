@@ -129,19 +129,24 @@ resource "azurerm_role_assignment" "admin" {
   scope                = azurerm_key_vault.kv.id
 }
 
-resource "azurerm_key_vault_certificate" "tls_star" {
-  name         = var.tls_cert_name
+# Certificates
+# ------------
+# - are not checked into git
+# - Issuer name must be 'Self' or 'Unknown' per Docs:
+#   https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_certificate
+
+resource "azurerm_key_vault_certificate" "cert" {
+  for_each     = var.tls_certificates
+  name         = each.value.name
   key_vault_id = azurerm_key_vault.kv.id
 
   certificate {
-    contents = filebase64(var.tls_cert_path)
+    contents = filebase64(each.value.cert_path)
   }
 
   certificate_policy {
-    # Note: Issuer name must be 'Self' or 'Unknown' per Docs
-    # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_certificate
     issuer_parameters {
-      name = var.tls_cert_issuer
+      name = "Unknown"
     }
 
     key_properties {
