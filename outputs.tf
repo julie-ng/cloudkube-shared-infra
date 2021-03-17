@@ -8,6 +8,10 @@ output "summary" {
       name = azurerm_key_vault.kv.name
       id   = azurerm_key_vault.kv.id
       uri  = azurerm_key_vault.kv.vault_uri
+      certs = [for c in azurerm_key_vault_certificate.cert : {
+        name    = c.name
+        subject = c.certificate_policy[0].x509_certificate_properties[0].subject
+      }]
     }
     storage_account = {
       name                  = azurerm_storage_account.storageacct.name
@@ -15,7 +19,7 @@ output "summary" {
     }
     dns_zone = {
       name         = azurerm_dns_zone.onazureio.name
-      name_servers = azurerm_dns_zone.onazureio.name_servers
+      name_servers = [for s in azurerm_dns_zone.onazureio.name_servers : s]
     }
   }
 }
