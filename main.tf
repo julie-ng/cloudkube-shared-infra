@@ -24,12 +24,13 @@ resource "azurerm_resource_group" "shared_rg" {
   tags     = var.default_tags
 }
 
-resource "azurerm_management_lock" "locked_rg" {
-  name       = "shared-rg-lock"
-  scope      = azurerm_resource_group.shared_rg.id
-  lock_level = "CanNotDelete"
-  notes      = "These resources are shared by many projects and demos."
-}
+# Disable Management Lock in Dev - so we can remove (work-in-progress) role assignments
+# resource "azurerm_management_lock" "locked_rg" {
+#   name       = "shared-rg-lock"
+#   scope      = azurerm_resource_group.shared_rg.id
+#   lock_level = "CanNotDelete"
+#   notes      = "These resources are shared by many projects and demos."
+# }
 
 # DNS Zone
 # --------
@@ -40,36 +41,24 @@ resource "azurerm_dns_zone" "onazureio" {
   tags                = var.default_tags
 }
 
-resource "azurerm_dns_a_record" "dev_cluster" {
-  name                = "dev"
+# A Records
+resource "azurerm_dns_a_record" "records" {
+  for_each            = var.dns_a_records
+  name                = each.value.name
   zone_name           = azurerm_dns_zone.onazureio.name
   resource_group_name = azurerm_resource_group.shared_rg.name
   ttl                 = 300
-  records             = [var.dev_cluster_public_ip]
+  records             = each.value.records
 }
 
-resource "azurerm_dns_a_record" "dev_cluster_wildcard" {
-  name                = "*.dev"
+# Cname Records
+resource "azurerm_dns_cname_record" "records" {
+  for_each            = var.dns_cname_records
+  name                = each.value.name
   zone_name           = azurerm_dns_zone.onazureio.name
   resource_group_name = azurerm_resource_group.shared_rg.name
   ttl                 = 300
-  records             = [var.dev_cluster_public_ip]
-}
-
-resource "azurerm_dns_cname_record" "appservice_node_demo" {
-  name                = "nodejs-demo"
-  zone_name           = azurerm_dns_zone.onazureio.name
-  resource_group_name = azurerm_resource_group.shared_rg.name
-  ttl                 = 300
-  record              = "azure-nodejs-demo.azurewebsites.net"
-}
-
-resource "azurerm_dns_cname_record" "appservice_node_demo_dev" {
-  name                = "nodejs-demo-dev"
-  zone_name           = azurerm_dns_zone.onazureio.name
-  resource_group_name = azurerm_resource_group.shared_rg.name
-  ttl                 = 300
-  record              = "azure-nodejs-demo-dev.azurewebsites.net"
+  record              = each.value.record
 }
 
 resource "azurerm_dns_mx_record" "hover_forward" {
@@ -160,4 +149,22 @@ resource "azurerm_key_vault_certificate" "cert" {
       content_type = "application/x-pem-file"
     }
   }
+}
+
+# Cert Role Assignments
+# ---------------------
+# Ingress Managed Identities to specific Certificates
+# N.B. neither intended nor a good user case for innerSource
+
+data "azurerm_user_assigned_identity" "ingress_managed_ids" {
+  for_each            = var.ingress_configs
+  name                = each.value.ingress_user_mi_name
+  resource_group_name = each.value.ingress_user_mi_rg
+}
+
+resource "azurerm_role_assignment" "ingress_mi_kv_readers" {
+  for_each             = var.ingress_configs
+  scope                = "${azurerm_key_vault.kv.id}/certificates/${each.value.ingress_cert_name}"
+  role_definition_name = "Key Vault Reader"
+  principal_id         = data.azurerm_user_assigned_identity.ingress_managed_ids[each.key].principal_id
 }

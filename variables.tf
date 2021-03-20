@@ -30,7 +30,11 @@ variable "key_vault_enable_rbac_authorization" {}
 
 # Certificates
 variable "tls_certificates" {
-  type = map(map(string))
+  type    = map(map(string))
   default = {}
 }
-variable "dev_cluster_public_ip" {}
+
+# See *.auto.tfvars
+variable "dns_a_records" {}
+variable "dns_cname_records" {}
+variable "ingress_configs" {}

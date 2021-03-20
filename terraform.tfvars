@@ -1,3 +1,4 @@
+# Foundation
 location            = "centralus"
 resource_group_name = "onazureio-shared-rg"
 default_tags = {
@@ -6,9 +7,6 @@ default_tags = {
   env    = "prod"
   iac    = "terraform"
 }
-
-# DNS
-dns_zone_name = "onazure.io"
 
 # Azure Container Registry
 azure_container_registry_name = "onazureiocr"
@@ -37,6 +35,3 @@ tls_certificates = {
     cert_path = "./certs/combined_star_dev_onazure_io.pem"
   }
 }
-
-# AKS
-dev_cluster_public_ip = "13.86.98.114"
