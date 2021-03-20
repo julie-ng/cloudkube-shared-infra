@@ -154,7 +154,7 @@ resource "azurerm_key_vault_certificate" "cert" {
 # Cert Role Assignments
 # ---------------------
 # Ingress Managed Identities to specific Certificates
-# N.B. neither intended nor a good user case for innerSource
+# N.B. neither intended nor a good use case for innerSource
 
 data "azurerm_user_assigned_identity" "ingress_managed_ids" {
   for_each            = var.ingress_configs
