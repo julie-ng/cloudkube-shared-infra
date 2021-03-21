@@ -7,7 +7,7 @@
 
 ingress_configs = {
   dev = {
-    ingress_public_ip    = "13.86.98.114"
+    ingress_public_ip    = "52.182.209.82"
     ingress_user_mi_name = "k8s-apps-dev-hmg-ingress-pod-mi"
     ingress_user_mi_rg   = "k8s-apps-dev-hmg-rg"
     ingress_cert_name    = "wildcard-dev-onazureio"

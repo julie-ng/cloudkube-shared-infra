@@ -10,13 +10,9 @@ dns_zone_name = "onazure.io"
 # A Records
 
 dns_a_records = {
-  dev_cluster = {
-    name    = "dev"
-    records = ["13.86.98.114"]
-  }
   dev_cluster_wildcard = {
     name    = "*.dev"
-    records = ["13.86.98.114"]
+    records = ["52.182.209.82"]
   }
 }
 
