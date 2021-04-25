@@ -11,6 +11,7 @@
 *.tfstate.backup
 *.lock.hcl
 *.tfstate.lock.info
+private.auto.tfvars
 
 certs/*
 
