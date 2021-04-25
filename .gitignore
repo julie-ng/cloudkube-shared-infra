@@ -5,6 +5,7 @@
 
 .terraform/
 *.conf
+*.conf.hcl
 *.tfplan
 *.tfstate
 *.tfstate.backup

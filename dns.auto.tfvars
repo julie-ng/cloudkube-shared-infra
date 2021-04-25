@@ -5,14 +5,18 @@
 
 # DNS Zone
 
-dns_zone_name = "onazure.io"
+dns_zone_name = "cloudkube.io"
 
 # A Records
 
 dns_a_records = {
+  dev_cluster = {
+    name    = "dev"
+    records = ["52.154.237.242"]
+  }
   dev_cluster_wildcard = {
     name    = "*.dev"
-    records = ["52.182.209.82"]
+    records = ["52.154.237.242"]
   }
 }
 
