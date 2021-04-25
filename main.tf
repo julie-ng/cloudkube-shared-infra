@@ -8,12 +8,12 @@ resource "azurerm_resource_group" "shared_rg" {
 }
 
 # Disable Management Lock in Dev - so we can remove (work-in-progress) role assignments
-# resource "azurerm_management_lock" "locked_rg" {
-#   name       = "shared-rg-lock"
-#   scope      = azurerm_resource_group.shared_rg.id
-#   lock_level = "CanNotDelete"
-#   notes      = "These resources are shared by many projects and demos."
-# }
+resource "azurerm_management_lock" "locked_rg" {
+  name       = "shared-rg-lock"
+  scope      = azurerm_resource_group.shared_rg.id
+  lock_level = "CanNotDelete"
+  notes      = "These resources are shared by many projects and demos."
+}
 
 # DNS Zone
 # --------
