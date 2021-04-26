@@ -12,11 +12,11 @@ dns_zone_name = "cloudkube.io"
 dns_a_records = {
   dev_cluster = {
     name    = "dev"
-    records = ["52.154.237.242"]
+    records = ["20.82.210.167"]
   }
   dev_cluster_wildcard = {
     name    = "*.dev"
-    records = ["52.154.237.242"]
+    records = ["20.82.210.167"]
   }
 }
 

@@ -10,10 +10,6 @@ terraform {
   }
 }
 
-# Configure the Microsoft Azure Provider
 provider "azurerm" {
   features {}
 }
-
-# Reference to current ARM client
-data "azurerm_client_config" "current" {}

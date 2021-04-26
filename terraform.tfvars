@@ -9,13 +9,13 @@ default_tags = {
 }
 
 # Azure Container Registry
-azure_container_registry_name = "cloudkubecr"
-azure_container_registry_sku  = "Basic"
+azure_container_registry_name        = "cloudkubecr"
+azure_container_registry_sku         = "Basic"
 
 # Storage Account
-storage_account_name             = "cloudkubestorage"
-storage_account_tier             = "Standard"
-storage_account_replication_type = "GRS"
+storage_account_name                 = "cloudkubestorage"
+storage_account_tier                 = "Standard"
+storage_account_replication_type     = "GRS"
 
 # Key Vault
 key_vault_name                       = "cloudkube-kv"

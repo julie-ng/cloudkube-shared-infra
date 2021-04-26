@@ -37,4 +37,4 @@ variable "tls_certificates" {
 # See *.auto.tfvars
 variable "dns_a_records" {}
 variable "dns_cname_records" {}
-# variable "ingress_configs" {}
+variable "ingress_configs" {}
