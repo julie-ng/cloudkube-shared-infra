@@ -9,6 +9,6 @@ ingress_configs = {
   cloudkube_dev = {
     ingress_user_mi_name = "cloudkube-dev-ingress-pod-mi"
     ingress_user_mi_rg   = "cloudkube-dev-r9er-managed-rg"
-    ingress_cert_name    = "wildcard-dev-cloubekube"
+    ingress_cert_name    = "wildcard-dev-cloudkube"
   }
 }

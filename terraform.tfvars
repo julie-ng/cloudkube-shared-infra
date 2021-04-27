@@ -27,12 +27,12 @@ key_vault_soft_delete_retention_days = 7     # minimum
 # TLS
 tls_certificates = {
   root = {
-    name      = "wildcard-cloubekube"
+    name      = "wildcard-cloudkube"
     cert_path = "./certs/combined_star_cloudkube_io.pem"
   }
 
   dev = {
-    name      = "wildcard-dev-cloubekube"
+    name      = "wildcard-dev-cloudkube"
     cert_path = "./certs/combined_star_dev_cloudkube_io.pem"
   }
 }
