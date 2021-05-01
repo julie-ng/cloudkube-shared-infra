@@ -79,11 +79,11 @@ Practical information about InnerSource in practice.
 
 ## Disclaimer
 
-This repository open source and my opinionated workflow for my use-case. Before you clone it and try it ot yourself, please remember it is 
+This repository open source and my opinionated workflow for my use-case. Before you clone it and try it out yourself, please remember it is 
 
-- not an official Microsoft recommendation
-- not a reference architecture
-- not a reference implementation
+- *not* an official Microsoft recommendation
+- *not* a reference architecture
+- *not* a reference implementation
 
 ## License
 
