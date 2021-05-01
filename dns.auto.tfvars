@@ -3,9 +3,7 @@
 # - Fork this repo to your org/user…
 # - See Readme for further details
 
-# DNS Zone
 
-dns_zone_name = "cloudkube.io"
 
 # A Records
 

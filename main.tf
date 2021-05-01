@@ -1,136 +1,109 @@
-# Me
-data "azurerm_client_config" "current" {}
+# =======
+#  Setup
+# =======
 
-locals {
-  subscription_id = data.azurerm_client_config.current.subscription_id
+terraform {
+  backend "azurerm" {
+  }
 }
 
-# ================
-#  Resource Group
-# ================
-
-resource "azurerm_resource_group" "shared_rg" {
-  name     = var.resource_group_name
-  location = var.location
-  tags     = var.default_tags
-}
-
-# Disable Management Lock in Dev - so we can remove (work-in-progress) role assignments
-# resource "azurerm_management_lock" "locked_rg" {
-#   name       = "shared-rg-lock"
-#   scope      = azurerm_resource_group.shared_rg.id
-#   lock_level = "CanNotDelete"
-#   notes      = "These resources are shared by many projects and demos."
-# }
-
-
-# ====================
-#  Container Registry
-# ====================
-
-resource "azurerm_container_registry" "acr" {
-  name                = var.azure_container_registry_name
-  resource_group_name = azurerm_resource_group.shared_rg.name
-  location            = azurerm_resource_group.shared_rg.location
-  sku                 = var.azure_container_registry_sku
-  network_rule_set    = [] # Temporarily revert back to Basic SKU
-  admin_enabled       = false
-  tags                = var.default_tags
-}
-
-# =================
-#  Storage Account
-# =================
-
-resource "azurerm_storage_account" "storageacct" {
-  name                     = var.storage_account_name
-  resource_group_name      = azurerm_resource_group.shared_rg.name
-  location                 = azurerm_resource_group.shared_rg.location
-  account_tier             = var.storage_account_tier
-  account_replication_type = var.storage_account_replication_type
-  tags                     = var.default_tags
-}
-
-# ============
-#  Key Vaults
-# ============
-
-resource "azurerm_key_vault" "vaults" {
-  for_each                   = var.key_vault_names
-  name                       = "${var.base_name}-${each.key}-kv"
-  location                   = var.location
-  sku_name                   = var.key_vault_sku
-  resource_group_name        = azurerm_resource_group.shared_rg.name
-  tenant_id                  = data.azurerm_client_config.current.tenant_id
-  soft_delete_retention_days = var.key_vault_soft_delete_retention_days
-  purge_protection_enabled   = var.key_vault_purge_protection_enabled
-  tags                       = var.default_tags
-  enable_rbac_authorization  = var.key_vault_enable_rbac_authorization
-}
-
-resource "azurerm_role_assignment" "vaults_admin" {
-  for_each             = var.key_vault_names
-  role_definition_name = "Key Vault Administrator"
-  principal_id         = data.azurerm_client_config.current.object_id
-  scope                = azurerm_key_vault.vaults[each.key].id
-}
+variable "dns_a_records" {}
+variable "dns_cname_records" {}
+variable "ingress_configs" {}
 
 # ==============
-#  Certificates
+#  Shared Infra
 # ==============
 
-resource "azurerm_key_vault_certificate" "tls_root_certs" {
-  for_each     = var.tls_certificates
-  name         = each.value["root"].name
-  key_vault_id = "/subscriptions/${local.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.KeyVault/vaults/${var.base_name}-${each.key}-kv"
+module "cloudkube" {
+  source = "./modules/shared-infra"
 
-  certificate {
-    contents = filebase64(each.value["root"].cert_path)
+  # Basics
+  base_name           = "cloudkube"
+  location            = "northeurope"
+  resource_group_name = "cloudkube-shared-rg"
+  default_tags = {
+    public = "true"
+    demo   = "true"
+    env    = "prod"
+    iac    = "terraform"
   }
 
-  certificate_policy {
-    issuer_parameters {
-      name = "Unknown"
+  # DNS
+  dns_zone_name     = "cloudkube.io"
+  dns_a_records     = var.dns_a_records
+  dns_cname_records = var.dns_cname_records
+
+  # Azure Container Registry
+  azure_container_registry_name = "cloudkubecr"
+  azure_container_registry_sku  = "Basic"
+
+  # Storage Account
+  storage_account_name             = "cloudkubestorage"
+  storage_account_tier             = "Standard"
+  storage_account_replication_type = "GRS"
+
+  # Key Vault Defaults
+  key_vault_sku                        = "standard"
+  key_vault_enable_rbac_authorization  = true
+  key_vault_purge_protection_enabled   = false # so we can fully delete it
+  key_vault_soft_delete_retention_days = 7     # minimum
+
+  key_vault_names = {
+    dev     = "cloudkube-dev-kv"
+    staging = "cloudkube-staging-kv"
+    prod    = "cloudkube-prod-kv"
+  }
+
+  # TLS certificate config
+  ingress_configs = var.ingress_configs
+
+  tls_certificates = {
+    dev = {
+      root = {
+        name      = "dev-cloudkube"
+        cert_path = "./certs/combined_dev_cloudkube_io.pem"
+      }
+      wildcard = {
+        name      = "wildcard-dev-cloudkube"
+        cert_path = "./certs/combined_star_dev_cloudkube_io.pem"
+      }
     }
 
-    key_properties {
-      exportable = true
-      key_size   = 2048
-      key_type   = "RSA"
-      reuse_key  = false
+    staging = {
+      root = {
+        name      = "staging-cloudkube"
+        cert_path = "./certs/combined_staging_cloudkube_io.pem"
+      }
+
+      wildcard = {
+        name      = "wildcard-staging-cloudkube"
+        cert_path = "./certs/combined_star_staging_cloudkube_io.pem"
+      }
     }
 
-    secret_properties {
-      content_type = "application/x-pem-file"
+    prod = {
+      root = {
+        name      = "cloudkube"
+        cert_path = "./certs/combined_root_cloudkube_io.pem"
+      }
+      wildcard = {
+        name      = "wildcard-cloudkube"
+        cert_path = "./certs/combined_star_cloudkube_io.pem"
+      }
     }
   }
 }
 
-# Wildcard Certificates
+# =========
+#  Outputs
+# =========
 
-resource "azurerm_key_vault_certificate" "tls_wildcard_certs" {
-  for_each     = var.tls_certificates
-  name         = each.value["wildcard"].name
-  key_vault_id = "/subscriptions/${local.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.KeyVault/vaults/${var.base_name}-${each.key}-kv"
-
-  certificate {
-    contents = filebase64(each.value["wildcard"].cert_path)
-  }
-
-  certificate_policy {
-    issuer_parameters {
-      name = "Unknown"
-    }
-
-    key_properties {
-      exportable = true
-      key_size   = 2048
-      key_type   = "RSA"
-      reuse_key  = false
-    }
-
-    secret_properties {
-      content_type = "application/x-pem-file"
-    }
+output "summary" {
+  value = {
+    main             = module.cloudkube.main
+    DNS              = module.cloudkube.DNS
+    key_vaults       = module.cloudkube.key_vaults
+    tls_certificates = module.cloudkube.tls_certificates
   }
 }
