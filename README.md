@@ -1,16 +1,25 @@
 # Shared Infrastructure - cloudkube.io
 
-[Terraform](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) Infrastructure as Code (IaC) I use to deploy and manage shared resources for cloudkube.io including:
+[Terraform](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) Infrastructure as Code (IaC) I use to deploy and manage shared resources for cloudkube.io
 
-- Resource Group
-- [RBAC-enabled Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/general/rbac-guide)
-- DNS Zone
-- Storage Account
+```bash
+$ az resource list -o table -g cloudkube-shared-rg
+
+Name                  ResourceGroup        Location     Type                                    
+--------------------  -------------------  -----------  --------------------------------------
+cloudkubestorage      cloudkube-shared-rg  northeurope  Microsoft.Storage/storageAccounts
+cloudkubecr           cloudkube-shared-rg  northeurope  Microsoft.ContainerRegistry/registries
+cloudkube.io          cloudkube-shared-rg  global       Microsoft.Network/dnszones
+cloudkube-prod-kv     cloudkube-shared-rg  northeurope  Microsoft.KeyVault/vaults
+cloudkube-staging-kv  cloudkube-shared-rg  northeurope  Microsoft.KeyVault/vaults
+cloudkube-dev-kv      cloudkube-shared-rg  northeurope  Microsoft.KeyVault/vaults
+```
 
 <img src="./images/shared-rg.png" width="600" alt="Diagram: shared resources (not accurate)">
 
-_Disclaimer: this is neither a reference architecture nor a reference implementation._
+_Diagram: shared resources (outdated)_
 
+## Terraform -  Infra as Code
 
 ### Configuration
 
