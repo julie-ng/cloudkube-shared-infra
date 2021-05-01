@@ -3,7 +3,7 @@
 [Terraform](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) Infrastructure as Code (IaC) I use to deploy and manage shared resources for cloudkube.io including:
 
 - Resource Group
-- Key Vault with RBAC enabled [(preview feature)](https://docs.microsoft.com/en-us/azure/key-vault/general/rbac-guide)
+- [RBAC-enabled Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/general/rbac-guide)
 - DNS Zone
 - Storage Account
 
@@ -17,8 +17,8 @@ _Disclaimer: this is neither a reference architecture nor a reference implementa
 | File | Description | InnerSource? |
 |:--|:--|:--|
 | `dns.auto.tfvars` | A and CNAME records for root domain. | Example |
-| `ingress-tls.auto.tfvars` | For my convenience. Not a common use case. | No |
-| `terraform.tfvars` | Configuration to deploy shared infrastructure | No |
+| `ingress.auto.tfvars` | For my convenience. Not a common use case. | No |
+| `main.tfvars` | Configuration to deploy shared infrastructure | No |
 
 ### Terraform Syntax References
 
@@ -46,6 +46,7 @@ output "certificate_role_assginments" {
 - [Functions - `zipmap`](https://www.terraform.io/docs/language/functions/zipmap.html)
 - [Resources - `for_each` meta argument](https://www.terraform.io/docs/language/meta-arguments/for_each.html)
 
+---
 
 ## InnerSource Infrastructure Example 
 
@@ -76,6 +77,8 @@ Practical information about InnerSource in practice.
 - [GitLab: What is InnerSource?](https://about.gitlab.com/topics/version-control/what-is-innersource/)
 - [Zalando: How to InnerSource](https://opensource.zalando.com/docs/resources/innersource-howto/)
 - [InnerSource Commons](https://innersourcecommons.org/)
+
+---
 
 ## Disclaimer
 
