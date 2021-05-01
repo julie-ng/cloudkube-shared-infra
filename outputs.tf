@@ -20,35 +20,29 @@ output "main" {
 #  Key Vault
 # ===========
 
-output "key_vault" {
-  value = {
-    key_vault = {
-      name = azurerm_key_vault.kv.name
-      id   = azurerm_key_vault.kv.id
-      uri  = azurerm_key_vault.kv.vault_uri
-      certs = [for c in azurerm_key_vault_certificate.cert : {
-        id      = c.id
-        name    = c.name
-        subject = c.certificate_policy[0].x509_certificate_properties[0].subject
-      }]
+output "key_vaults" {
+  value = [
+    for v in azurerm_key_vault.vaults : {
+      name         = v.name
+      sku          = v.sku_name
+      rbac_enabled = v.enable_rbac_authorization
+      vault_uri    = v.vault_uri
     }
+  ]
+}
 
-    certificate_role_assginments = [
-      for k, v in zipmap( # needed to combine resource and data sources
-        keys(azurerm_role_assignment.ingress_mi_kv_readers),
-      values(azurerm_role_assignment.ingress_mi_kv_readers)) :
-      {
-        tostring(k) = {
-          id                   = v.id
-          scope                = v.scope
-          role_definition_name = v.role_definition_name
-          principal_id         = v.principal_id
-          principal_type       = v.principal_type
-          principal_name       = data.azurerm_user_assigned_identity.ingress_managed_ids[k].name
-          principal_rg         = data.azurerm_user_assigned_identity.ingress_managed_ids[k].resource_group_name
-        }
-      }
-    ]
+output "tls_certificates" {
+  value = {
+    root      = [for c in azurerm_key_vault_certificate.tls_root_certs : {
+      id      = c.id
+      name    = c.name
+      subject = c.certificate_policy[0].x509_certificate_properties[0].subject
+    }]
+    wildcards = [for c in azurerm_key_vault_certificate.tls_wildcard_certs : {
+      id      = c.id
+      name    = c.name
+      subject = c.certificate_policy[0].x509_certificate_properties[0].subject
+    }]
   }
 }
 

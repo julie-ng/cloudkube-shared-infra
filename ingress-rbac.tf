@@ -11,7 +11,14 @@ data "azurerm_user_assigned_identity" "ingress_managed_ids" {
 
 resource "azurerm_role_assignment" "ingress_mi_kv_readers" {
   for_each             = var.ingress_configs
-  scope                = "${azurerm_key_vault.kv.id}/certificates/${each.value.ingress_cert_name}"
+  scope                = azurerm_key_vault.vaults[each.key].id
   role_definition_name = "Key Vault Reader"
+  principal_id         = data.azurerm_user_assigned_identity.ingress_managed_ids[each.key].principal_id
+}
+
+resource "azurerm_role_assignment" "ingress_mi_kv_secrets_users" {
+  for_each             = var.ingress_configs
+  scope                = azurerm_key_vault.vaults[each.key].id
+  role_definition_name = "Key Vault Secrets User"
   principal_id         = data.azurerm_user_assigned_identity.ingress_managed_ids[each.key].principal_id
 }

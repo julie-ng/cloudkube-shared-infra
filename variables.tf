@@ -1,4 +1,5 @@
 # Basics
+variable "base_name" {}
 variable "resource_group_name" {}
 variable "location" {}
 variable "default_tags" {
@@ -22,15 +23,15 @@ variable "storage_account_tier" {}
 variable "storage_account_replication_type" {}
 
 # Key Vault
-variable "key_vault_name" {}
 variable "key_vault_sku" {}
 variable "key_vault_soft_delete_retention_days" {}
 variable "key_vault_purge_protection_enabled" {}
 variable "key_vault_enable_rbac_authorization" {}
 
 # Certificates
+variable "key_vault_names" {}
 variable "tls_certificates" {
-  type    = map(map(string))
+  type    = map(map(map(string)))
   default = {}
 }
 

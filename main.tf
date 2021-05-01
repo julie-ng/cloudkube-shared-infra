@@ -1,8 +1,13 @@
 # Me
 data "azurerm_client_config" "current" {}
 
-# Resource Group
-# --------------
+locals {
+  subscription_id = data.azurerm_client_config.current.subscription_id
+}
+
+# ================
+#  Resource Group
+# ================
 
 resource "azurerm_resource_group" "shared_rg" {
   name     = var.resource_group_name
@@ -18,8 +23,10 @@ resource "azurerm_resource_group" "shared_rg" {
 #   notes      = "These resources are shared by many projects and demos."
 # }
 
-# Container Registry
-# ------------------
+
+# ====================
+#  Container Registry
+# ====================
 
 resource "azurerm_container_registry" "acr" {
   name                = var.azure_container_registry_name
@@ -31,8 +38,9 @@ resource "azurerm_container_registry" "acr" {
   tags                = var.default_tags
 }
 
-# Storage Account
-# ---------------
+# =================
+#  Storage Account
+# =================
 
 resource "azurerm_storage_account" "storageacct" {
   name                     = var.storage_account_name
@@ -43,11 +51,13 @@ resource "azurerm_storage_account" "storageacct" {
   tags                     = var.default_tags
 }
 
-# Key Vault
-# ---------
+# ============
+#  Key Vaults
+# ============
 
-resource "azurerm_key_vault" "kv" {
-  name                       = var.key_vault_name
+resource "azurerm_key_vault" "vaults" {
+  for_each                   = var.key_vault_names
+  name                       = "${var.base_name}-${each.key}-kv"
   location                   = var.location
   sku_name                   = var.key_vault_sku
   resource_group_name        = azurerm_resource_group.shared_rg.name
@@ -58,25 +68,53 @@ resource "azurerm_key_vault" "kv" {
   enable_rbac_authorization  = var.key_vault_enable_rbac_authorization
 }
 
-resource "azurerm_role_assignment" "admin" {
+resource "azurerm_role_assignment" "vaults_admin" {
+  for_each             = var.key_vault_names
   role_definition_name = "Key Vault Administrator"
   principal_id         = data.azurerm_client_config.current.object_id
-  scope                = azurerm_key_vault.kv.id
+  scope                = azurerm_key_vault.vaults[each.key].id
 }
 
-# Certificates
-# ------------
-# - are not checked into git
-# - Issuer name must be 'Self' or 'Unknown' per Docs:
-#   https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_certificate
+# ==============
+#  Certificates
+# ==============
 
-resource "azurerm_key_vault_certificate" "cert" {
+resource "azurerm_key_vault_certificate" "tls_root_certs" {
   for_each     = var.tls_certificates
-  name         = each.value.name
-  key_vault_id = azurerm_key_vault.kv.id
+  name         = each.value["root"].name
+  key_vault_id = "/subscriptions/${local.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.KeyVault/vaults/${var.base_name}-${each.key}-kv"
 
   certificate {
-    contents = filebase64(each.value.cert_path)
+    contents = filebase64(each.value["root"].cert_path)
+  }
+
+  certificate_policy {
+    issuer_parameters {
+      name = "Unknown"
+    }
+
+    key_properties {
+      exportable = true
+      key_size   = 2048
+      key_type   = "RSA"
+      reuse_key  = false
+    }
+
+    secret_properties {
+      content_type = "application/x-pem-file"
+    }
+  }
+}
+
+# Wildcard Certificates
+
+resource "azurerm_key_vault_certificate" "tls_wildcard_certs" {
+  for_each     = var.tls_certificates
+  name         = each.value["wildcard"].name
+  key_vault_id = "/subscriptions/${local.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.KeyVault/vaults/${var.base_name}-${each.key}-kv"
+
+  certificate {
+    contents = filebase64(each.value["wildcard"].cert_path)
   }
 
   certificate_policy {
