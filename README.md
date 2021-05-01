@@ -1,4 +1,4 @@
-# Shared Infrastructure - cloudkube.io
+# cloudkube.io - Shared Infrastructure
 
 [Terraform](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) Infrastructure as Code (IaC) I use to deploy and manage shared resources for cloudkube.io
 
