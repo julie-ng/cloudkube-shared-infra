@@ -1,5 +1,6 @@
-# DNS Zone
-# --------
+# ==========
+#  DNS Zone
+# ==========
 
 resource "azurerm_dns_zone" "shared_dns" {
   name                = var.dns_zone_name
@@ -27,6 +28,7 @@ resource "azurerm_dns_cname_record" "records" {
   record              = each.value.record
 }
 
+# Deal wtih it :P
 resource "azurerm_dns_mx_record" "email" {
   name                = "@"
   zone_name           = azurerm_dns_zone.shared_dns.name

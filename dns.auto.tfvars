@@ -1,11 +1,11 @@
-# Inner Source Example -"How to Update"
-# --------------------
-# - Fork this repo to your org/user…
-# - See Readme for further details
-
-
+# =============
+#  DNS Records
+# =============
+# - possible example for inner source
+# - separate file to make pull requests easier
 
 # A Records
+# ---------
 
 dns_a_records = {
   dev_cluster = {
@@ -19,6 +19,7 @@ dns_a_records = {
 }
 
 # CNAME Records
+# -------------
 
 dns_cname_records = {
   nodejs_demo = {

@@ -1,9 +1,8 @@
-# Inner Source? NO!
-# -----------------
-# This is *not* a good example for inner source because one
-# a cluster has access to these certicates, they can extract it.
-#
-# This file is here just to make @julie-ng's life easier ;-)
+# ==============
+#  Ingress RBAC
+# ==============
+# - configures rbac to access TLS certificates
+# - not good example for inner source
 
 ingress_configs = {
   dev = {
