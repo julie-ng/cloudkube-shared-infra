@@ -16,6 +16,14 @@ dns_a_records = {
     name    = "*.dev"
     records = ["20.82.210.167"]
   }
+  staging_cluster = {
+    name    = "staging"
+    records = ["20.54.32.114"]
+  }
+  staging_cluster_wildcard = {
+    name    = "*.staging"
+    records = ["20.54.32.114"]
+  }
 }
 
 # CNAME Records
