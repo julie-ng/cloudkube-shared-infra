@@ -82,16 +82,3 @@ module "cloudkube" {
     }
   }
 }
-
-# =========
-#  Outputs
-# =========
-
-output "summary" {
-  value = {
-    main             = module.cloudkube.main
-    DNS              = module.cloudkube.DNS
-    key_vaults       = module.cloudkube.key_vaults
-    tls_certificates = module.cloudkube.tls_certificates
-  }
-}
