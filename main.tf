@@ -1,15 +1,8 @@
-# =======
-#  Setup
-# =======
+# =====================
+#  Self Reference (Me)
+# =====================
 
-terraform {
-  backend "azurerm" {
-  }
-}
-
-variable "dns_a_records" {}
-variable "dns_cname_records" {}
-variable "ingress_configs" {}
+data "azurerm_client_config" "current" {}
 
 # ==============
 #  Shared Infra
@@ -19,15 +12,10 @@ module "cloudkube" {
   source = "./modules/shared-infra"
 
   # Basics
-  base_name           = "cloudkube"
-  location            = "northeurope"
-  resource_group_name = "cloudkube-shared-rg"
-  default_tags = {
-    public = "true"
-    demo   = "true"
-    env    = "prod"
-    iac    = "terraform"
-  }
+  base_name           = var.base_name
+  location            = var.location
+  resource_group_name = var.shared_rg_name
+  default_tags        = var.default_tags
 
   # DNS
   dns_zone_name     = "cloudkube.io"
@@ -44,10 +32,10 @@ module "cloudkube" {
   storage_account_replication_type = "GRS"
 
   # Key Vault Defaults
-  key_vault_sku                        = "standard"
-  key_vault_enable_rbac_authorization  = true
-  key_vault_purge_protection_enabled   = false # so we can fully delete it
-  key_vault_soft_delete_retention_days = 7     # minimum
+  key_vault_sku                        = var.key_vault_sku
+  key_vault_enable_rbac_authorization  = var.key_vault_enable_rbac_authorization
+  key_vault_purge_protection_enabled   = var.key_vault_purge_protection_enabled
+  key_vault_soft_delete_retention_days = var.key_vault_soft_delete_retention_days
 
   key_vault_names = {
     dev     = "cloudkube-dev-kv"
