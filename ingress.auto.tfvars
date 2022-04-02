@@ -11,6 +11,6 @@ ingress_configs = {
   }
   staging = {
     ingress_user_mi_name = "cloudkube-staging-ingress-pod-mi"
-    ingress_user_mi_rg   = "cloudkube-staging-d7c-managed-rg"
+    ingress_user_mi_rg   = "cloudkube-staging-d7c-rg"
   }
 }
