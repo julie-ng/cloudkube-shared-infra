@@ -17,11 +17,6 @@ module "cloudkube" {
   resource_group_name = var.shared_rg_name
   default_tags        = var.default_tags
 
-  # DNS
-  dns_zone_name     = "cloudkube.io"
-  dns_a_records     = var.dns_a_records
-  dns_cname_records = var.dns_cname_records
-
   # Azure Container Registry
   azure_container_registry_name = "cloudkubecr"
   azure_container_registry_sku  = "Basic"
@@ -42,9 +37,6 @@ module "cloudkube" {
     staging = "cloudkube-staging-kv"
     prod    = "cloudkube-prod-kv"
   }
-
-  # TLS certificate config
-  ingress_configs = var.ingress_configs
 
   tls_certificates = {
     dev = {
@@ -79,6 +71,40 @@ module "cloudkube" {
         name      = "wildcard-cloudkube"
         cert_path = "./certs/combined_star_cloudkube_io.pem"
       }
+    }
+  }
+
+  # DNS Records
+  dns_zone_name     = "cloudkube.io"
+  dns_cname_records = var.dns_cname_records
+  dns_a_records = {
+    dev_cluster = {
+      name    = "dev"
+      records = [data.azurerm_public_ip.dev.ip_address]
+    }
+    dev_cluster_wildcard = {
+      name    = "*.dev"
+      records = [data.azurerm_public_ip.dev.ip_address]
+    }
+    staging_cluster = {
+      name    = "staging"
+      records = [data.azurerm_public_ip.staging.ip_address]
+    }
+    staging_cluster_wildcard = {
+      name    = "*.staging"
+      records = [data.azurerm_public_ip.staging.ip_address]
+    }
+  }
+
+  # TLS certificate config
+  ingress_configs = {
+    dev = {
+      ingress_user_mi_name = "cloudkube-dev-${var.dev_suffix}-cluster-agentpool"
+      ingress_user_mi_rg   = "cloudkube-dev-${var.dev_suffix}-managed-rg"
+    }
+    staging = {
+      ingress_user_mi_name = "cloudkube-staging-ingress-pod-mi"
+      ingress_user_mi_rg   = "cloudkube-staging-${var.staging_suffix}-rg"
     }
   }
 }

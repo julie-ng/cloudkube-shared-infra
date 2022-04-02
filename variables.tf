@@ -1,6 +1,6 @@
-variable "dns_a_records" {}
+variable "dev_suffix" {}
+variable "staging_suffix" {}
 variable "dns_cname_records" {}
-variable "ingress_configs" {}
 variable "default_tags" {}
 variable "shared_rg_name" {}
 variable "base_name" {}

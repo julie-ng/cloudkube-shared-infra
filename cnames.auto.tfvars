@@ -4,28 +4,6 @@
 # - possible example for inner source
 # - separate file to make pull requests easier
 
-# A Records
-# ---------
-
-dns_a_records = {
-  dev_cluster = {
-    name    = "dev"
-    records = ["20.82.210.167"]
-  }
-  dev_cluster_wildcard = {
-    name    = "*.dev"
-    records = ["20.82.210.167"]
-  }
-  staging_cluster = {
-    name    = "staging"
-    records = ["20.54.32.114"]
-  }
-  staging_cluster_wildcard = {
-    name    = "*.staging"
-    records = ["20.54.32.114"]
-  }
-}
-
 # CNAME Records
 # -------------
 
