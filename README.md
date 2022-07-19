@@ -83,3 +83,38 @@ Practical information about InnerSource in practice.
 - [GitLab: What is InnerSource?](https://about.gitlab.com/topics/version-control/what-is-innersource/)
 - [Zalando: How to InnerSource](https://opensource.zalando.com/docs/resources/innersource-howto/)
 - [InnerSource Commons](https://innersourcecommons.org/)
+
+
+## Commands
+
+To deploy, run:
+
+```bash
+terraform init -backend-config=azure.conf.hcl 
+terraform plan -out plan.tfplan
+terraform apply plan.tfplan
+
+```
+
+### Expired SAS Token
+
+If the SAS token to the state file has expired, first generate new token
+
+```bash
+az storage account generate-sas \
+  --permissions cdlruwap \
+  --account-name <STORAGE_ACCOUNT_NAME> \
+  --services b \
+  --resource-types sco  \
+  --expiry $(date -v+21d '+%Y-%m-%dT%H:%MZ') \
+  -o tsv
+```
+
+
+And then terraform needs to be re-initialized with new config with `-reconfigure` flag.
+
+```bash
+terraform init -backend-config=azure.conf.hcl -reconfigure
+```
+
+Then follow standard `plan` and `apply`.
