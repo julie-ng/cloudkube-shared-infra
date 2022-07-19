@@ -99,8 +99,8 @@ module "cloudkube" {
   # TLS certificate config
   ingress_configs = {
     dev = {
-      ingress_user_mi_name = "cloudkube-dev-${var.dev_suffix}-cluster-agentpool"
-      ingress_user_mi_rg   = "cloudkube-dev-${var.dev_suffix}-managed-rg"
+      ingress_user_mi_name = "cloudkube-dev-kubelet-mi"
+      ingress_user_mi_rg   = "cloudkube-dev-${var.dev_suffix}-rg"
     }
     staging = {
       ingress_user_mi_name = "cloudkube-staging-${var.staging_suffix}-cluster-agentpool"
