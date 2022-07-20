@@ -20,11 +20,7 @@ This repository open source and my opinionated workflow for my use-case. Before 
 
 ### Configuration
 
-| File | Description | InnerSource? |
-|:--|:--|:--|
-| [`dns.auto.tfvars`](./dns.auto.tfvars) | A and CNAME records for root domain. | Example |
-| [`ingress.auto.tfvars`](./ingress.auto.tfvars) | For my convenience. Not a common use case. | No |
-| [`main.tfvars`](./main.tf) | Configuration to deploy shared infrastructure | No |
+All configuration is currently hardcoded into [`main.tf`](./main.tf)
 
 ### Terraform Syntax References
 
@@ -60,7 +56,28 @@ In real life, you would probably want to separate these repos into distinct doma
 
 ### Developer Self-Service
 
-You can view [`dns.auto.tfvars`](./dns.auto.tfvars) as an example of how to leverage git and Pull Requests to manage changes to shared infrastructure.
+Example configuration as code for Inner Sourcing
+
+```hcl
+# cname.tfvars
+
+dns_cname_records = {
+  nodejs_demo = {
+    name   = "nodejs-demo"
+    record = "azure-nodejs-demo.azurewebsites.net"
+  }
+  node_js_demo_dev = {
+    name   = "nodejs-demo-dev"
+    record = "azure-nodejs-demo-dev.azurewebsites.net"
+  }
+}
+```
+
+
+
+You can view [`dns.auto.tfvars`](https://github.com/julie-ng/cloudkube-shared-infra/blob/f58cac5d7be905e90477eb241921f94afa44a161/dns.auto.tfvars) as an example of how to leverage git and Pull Requests to manage changes to shared infrastructure.
+
+Note: link goes back in history. Project as of writing in July 2022 has everything hard coded in main.tf - probably after re-factoring into a module. 
 
 Note to streamline the workflow process, it is important to have very clear instructions to developers on how to make changes that adhere to standards/conventions, which are set by the maintainers of the infrastructure.
 
