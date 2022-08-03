@@ -5,7 +5,7 @@ shared_rg_name = "cloudkube-shared-rg"
 
 # Suffixes (follows cloudkube naming convention)
 dev_suffix     = "v2fy"
-staging_suffix = "4ow"
+staging_suffix = "fi9"
 
 # Tags
 default_tags = {

@@ -103,8 +103,8 @@ module "cloudkube" {
       ingress_user_mi_rg   = "cloudkube-dev-${var.dev_suffix}-rg"
     }
     staging = {
-      ingress_user_mi_name = "cloudkube-staging-${var.staging_suffix}-cluster-agentpool"
-      ingress_user_mi_rg   = "cloudkube-staging-${var.staging_suffix}-managed-rg"
+      ingress_user_mi_name = "cloudkube-staging-kubelet-mi"
+      ingress_user_mi_rg   = "cloudkube-staging-${var.staging_suffix}-rg"
     }
   }
 }
