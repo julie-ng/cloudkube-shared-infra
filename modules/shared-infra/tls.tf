@@ -51,6 +51,10 @@ resource "azurerm_key_vault_certificate" "tls_root_certs" {
       content_type = "application/x-pem-file"
     }
   }
+
+  depends_on = [
+    azurerm_role_assignment.vaults_admin
+  ]
 }
 
 # Wildcard Certificates
@@ -80,5 +84,9 @@ resource "azurerm_key_vault_certificate" "tls_wildcard_certs" {
       content_type = "application/x-pem-file"
     }
   }
+
+  depends_on = [
+    azurerm_role_assignment.vaults_admin
+  ]
 }
 

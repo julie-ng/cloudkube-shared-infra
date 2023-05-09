@@ -37,7 +37,7 @@ output "key_vaults" {
 
 output "tls_certificates" {
   value = {
-    root      = [for c in azurerm_key_vault_certificate.tls_root_certs : {
+    root = [for c in azurerm_key_vault_certificate.tls_root_certs : {
       id      = c.id
       name    = c.name
       subject = c.certificate_policy[0].x509_certificate_properties[0].subject
