@@ -6,6 +6,10 @@ output "main" {
   value = module.cloudkube.main
 }
 
+output "me" {
+  value = module.cloudkube.me
+}
+
 output "DNS" {
   value = module.cloudkube.DNS
 }

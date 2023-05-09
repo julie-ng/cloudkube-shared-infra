@@ -1,3 +1,7 @@
+output "me" {
+  value = data.azurerm_client_config.current
+}
+
 output "main" {
   value = {
     resource_group = {
