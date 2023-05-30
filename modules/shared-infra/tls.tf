@@ -15,12 +15,12 @@ resource "azurerm_key_vault" "vaults" {
   enable_rbac_authorization  = var.key_vault_enable_rbac_authorization
 }
 
-resource "azurerm_role_assignment" "vaults_admin" {
-  for_each             = var.key_vault_names
-  role_definition_name = "Key Vault Administrator"
-  principal_id         = data.azurerm_client_config.current.object_id
-  scope                = azurerm_key_vault.vaults[each.key].id
-}
+# resource "azurerm_role_assignment" "vaults_admin" {
+#   for_each             = var.key_vault_names
+#   role_definition_name = "Key Vault Administrator"
+#   principal_id         = data.azurerm_client_config.current.object_id
+#   scope                = azurerm_key_vault.vaults[each.key].id
+# }
 
 # ==============
 #  Certificates
@@ -51,10 +51,6 @@ resource "azurerm_key_vault_certificate" "tls_root_certs" {
       content_type = "application/x-pem-file"
     }
   }
-
-  depends_on = [
-    azurerm_role_assignment.vaults_admin
-  ]
 }
 
 # Wildcard Certificates
@@ -84,9 +80,4 @@ resource "azurerm_key_vault_certificate" "tls_wildcard_certs" {
       content_type = "application/x-pem-file"
     }
   }
-
-  depends_on = [
-    azurerm_role_assignment.vaults_admin
-  ]
 }
-
