@@ -5,11 +5,11 @@
 # Static IPs
 
 data "azurerm_public_ip" "dev" {
-  name                = "cloudkube-dev-public-ip"
+  name                = "cloudkube-dev-ingress-ip"
   resource_group_name = "cloudkube-dev-${var.dev_suffix}-rg"
 }
 
 data "azurerm_public_ip" "staging" {
-  name                = "cloudkube-staging-public-ip"
+  name                = "cloudkube-staging-ingress-ip"
   resource_group_name = "cloudkube-staging-${var.staging_suffix}-rg"
 }
