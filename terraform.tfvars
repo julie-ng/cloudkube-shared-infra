@@ -4,8 +4,8 @@ location       = "northeurope"
 shared_rg_name = "cloudkube-shared-rg"
 
 # Suffixes (follows cloudkube naming convention)
-dev_suffix     = "m59i"
-staging_suffix = "1bp"
+dev_suffix     = "0ee9"
+staging_suffix = "5cu"
 
 # Tags
 default_tags = {
