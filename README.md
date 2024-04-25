@@ -16,39 +16,30 @@ This repository open source and my opinionated workflow for my use-case. Before 
 - *not* a reference architecture
 - *not* a reference implementation
 
-## Terraform Setup
+## Usage
 
-### Configuration
+**Notes to self**
 
-All configuration is currently hardcoded into [`main.tf`](./main.tf)
+First check config
 
-### Terraform Syntax References
+- State file auth: nothing to configure. Uses Azure AD auth.
+- Infra: adjust [`terraform.tfvars`](./terraform.tfvars) as needed
 
-In case you're trying to wrap your head around the Terraform code examples like this one…
+Then just run commands
 
-```terraform
-output "certificate_role_assginments" {
-  value = [
-    for k, v in zipmap( 
-      keys(azurerm_role_assignment.ingress_mi_kv_readers),
-      values(azurerm_role_assignment.ingress_mi_kv_readers)) : {
-      tostring(k) = {        
-        scope          = v.scope
-        principal_name = data.azurerm_user_assigned_identity.ingress_managed_ids[k].name
-        principal_rg   = data.azurerm_user_assigned_identity.ingress_managed_ids[k].resource_group_name
-      }
-    }
-  ]
-}
+```bash
+make init
+make plan
+make apply
 ```
 
-…please see the Terraform documentation:
+or
 
-- [Expressions - `for`](https://www.terraform.io/docs/language/expressions/for.html)
-- [Functions - `zipmap`](https://www.terraform.io/docs/language/functions/zipmap.html)
-- [Resources - `for_each` meta argument](https://www.terraform.io/docs/language/meta-arguments/for_each.html)
-
----
+```bash
+terraform init -backend-config=azure.conf.hcl 
+terraform plan -out plan.tfplan
+terraform apply plan.tfplan
+```
 
 ## InnerSource Infrastructure Example 
 
@@ -100,38 +91,3 @@ Practical information about InnerSource in practice.
 - [GitLab: What is InnerSource?](https://about.gitlab.com/topics/version-control/what-is-innersource/)
 - [Zalando: How to InnerSource](https://opensource.zalando.com/docs/resources/innersource-howto/)
 - [InnerSource Commons](https://innersourcecommons.org/)
-
-
-## Commands
-
-To deploy, run:
-
-```bash
-terraform init -backend-config=azure.conf.hcl 
-terraform plan -out plan.tfplan
-terraform apply plan.tfplan
-
-```
-
-### Expired SAS Token
-
-If the SAS token to the state file has expired, first generate new token
-
-```bash
-az storage account generate-sas \
-  --permissions cdlruwap \
-  --account-name <STORAGE_ACCOUNT_NAME> \
-  --services b \
-  --resource-types sco  \
-  --expiry $(date -v+21d '+%Y-%m-%dT%H:%MZ') \
-  -o tsv
-```
-
-
-And then terraform needs to be re-initialized with new config with `-reconfigure` flag.
-
-```bash
-terraform init -backend-config=azure.conf.hcl -reconfigure
-```
-
-Then follow standard `plan` and `apply`.
