@@ -11,8 +11,8 @@ data "azurerm_client_config" "current" {}
 # Static IPs
 
 data "azurerm_public_ip" "dev" {
-  name                = "cloudkube-dev-ingress-ip"
-  resource_group_name = "cloudkube-dev-${var.dev_suffix}-rg"
+  name                = "cloudkube-dev-aks-ingress-ip"
+  resource_group_name = "cloudkube-dev-networking-rg"
 }
 
 # data "azurerm_public_ip" "staging" {
