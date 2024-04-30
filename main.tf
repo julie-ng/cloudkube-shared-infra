@@ -15,10 +15,10 @@ data "azurerm_public_ip" "dev" {
   resource_group_name = "cloudkube-dev-${var.dev_suffix}-rg"
 }
 
-data "azurerm_public_ip" "staging" {
-  name                = "cloudkube-staging-ingress-ip"
-  resource_group_name = "cloudkube-staging-${var.staging_suffix}-rg"
-}
+# data "azurerm_public_ip" "staging" {
+#   name                = "cloudkube-staging-ingress-ip"
+#   resource_group_name = "cloudkube-staging-${var.staging_suffix}-rg"
+# }
 
 # ==============
 #  Shared Infra
@@ -102,14 +102,14 @@ module "cloudkube" {
       name    = "*.dev"
       records = [data.azurerm_public_ip.dev.ip_address]
     }
-    staging_cluster = {
-      name    = "staging"
-      records = [data.azurerm_public_ip.staging.ip_address]
-    }
-    staging_cluster_wildcard = {
-      name    = "*.staging"
-      records = [data.azurerm_public_ip.staging.ip_address]
-    }
+    # staging_cluster = {
+    #   name    = "staging"
+    #   records = [data.azurerm_public_ip.staging.ip_address]
+    # }
+    # staging_cluster_wildcard = {
+    #   name    = "*.staging"
+    #   records = [data.azurerm_public_ip.staging.ip_address]
+    # }
   }
 
   # TLS certificate config
@@ -118,9 +118,9 @@ module "cloudkube" {
       ingress_user_mi_name = "cloudkube-dev-${var.dev_suffix}-kubelet-mi"
       ingress_user_mi_rg   = "cloudkube-dev-${var.dev_suffix}-rg"
     }
-    staging = {
-      ingress_user_mi_name = "cloudkube-staging-${var.staging_suffix}-kubelet-mi"
-      ingress_user_mi_rg   = "cloudkube-staging-${var.staging_suffix}-rg"
-    }
+    # staging = {
+    #   ingress_user_mi_name = "cloudkube-staging-${var.staging_suffix}-kubelet-mi"
+    #   ingress_user_mi_rg   = "cloudkube-staging-${var.staging_suffix}-rg"
+    # }
   }
 }
