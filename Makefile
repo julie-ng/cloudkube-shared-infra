@@ -1,5 +1,5 @@
 init:
-	terraform init -backend-config=azure.conf.hcl
+	terraform init -backend-config=backends/azure.conf.hcl
 
 plan:
 	terraform plan -out plan.tfplan

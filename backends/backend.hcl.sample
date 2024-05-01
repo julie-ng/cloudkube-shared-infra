@@ -1,0 +1,4 @@
+storage_account_name = "mystorageaccount"
+container_name       = "shared-infra"
+key                  = "production.tfstate"
+use_azuread_auth     = true
