@@ -10,6 +10,10 @@ dev_certificates = [
   {
     name     = "wildcard-dev-cloudkube"
     pem_file = "./certs/2024/combined_star_dev_cloudkube_io.pem"
+  },
+  {
+    name     = "aks-cheatsheets"
+    pem_file = "./certs/2024/combined_dev_aks_cheatsheets_dev.pem"
   }
 ]
 
@@ -34,15 +38,15 @@ staging_certificates = [
 
 prod_certificates = [
   {
-    name     = "aks-cheatsheets"
-    pem_file = "./certs/2024/combined_aks_cheatsheets_dev.pem"
-  },
-  {
     name     = "cloudkube"
     pem_file = "./certs/2024/combined_cloudkube_io.pem"
   },
   {
     name     = "wildcard-cloudkube"
     pem_file = "./certs/2024/combined_star_cloudkube_io.pem"
+  },
+  {
+    name     = "aks-cheatsheets"
+    pem_file = "./certs/2024/combined_aks_cheatsheets_dev.pem"
   }
 ]
