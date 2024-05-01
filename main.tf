@@ -43,52 +43,13 @@ module "cloudkube" {
   storage_account_replication_type = "GRS"
 
   # Key Vault Defaults
+  key_vault_names                      = var.key_vault_names
   key_vault_sku                        = var.key_vault_sku
   key_vault_enable_rbac_authorization  = var.key_vault_enable_rbac_authorization
   key_vault_purge_protection_enabled   = var.key_vault_purge_protection_enabled
   key_vault_soft_delete_retention_days = var.key_vault_soft_delete_retention_days
 
-  key_vault_names = {
-    dev     = "cloudkube-dev-kv"
-    staging = "cloudkube-staging-kv"
-    prod    = "cloudkube-prod-kv"
-  }
-
-  tls_certificates = {
-    dev = {
-      root = {
-        name      = "dev-cloudkube"
-        cert_path = "./certs/2024/combined_dev_cloudkube_io.pem"
-      }
-      wildcard = {
-        name      = "wildcard-dev-cloudkube"
-        cert_path = "./certs/2024/combined_star_dev_cloudkube_io.pem"
-      }
-    }
-
-    staging = {
-      root = {
-        name      = "staging-cloudkube"
-        cert_path = "./certs/2024/combined_staging_cloudkube_io.pem"
-      }
-
-      wildcard = {
-        name      = "wildcard-staging-cloudkube"
-        cert_path = "./certs/2024/combined_star_staging_cloudkube_io.pem"
-      }
-    }
-
-    prod = {
-      root = {
-        name      = "cloudkube"
-        cert_path = "./certs/2024/combined_cloudkube_io.pem"
-      }
-      wildcard = {
-        name      = "wildcard-cloudkube"
-        cert_path = "./certs/2024/combined_star_cloudkube_io.pem"
-      }
-    }
-  }
+  tls_certificates = var.tls_certificates
 
   # DNS Records
   dns_zone_name     = "cloudkube.io"
