@@ -49,7 +49,10 @@ module "cloudkube" {
   key_vault_purge_protection_enabled   = var.key_vault_purge_protection_enabled
   key_vault_soft_delete_retention_days = var.key_vault_soft_delete_retention_days
 
-  tls_certificates = var.tls_certificates
+  # tls_certificates = var.tls_certificates
+  dev_certificates     = var.dev_certificates
+  staging_certificates = var.staging_certificates
+  prod_certificates    = var.prod_certificates
 
   # DNS Records
   dns_zone_name     = "cloudkube.io"

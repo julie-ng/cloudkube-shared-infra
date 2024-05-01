@@ -1,13 +1,13 @@
-# =========
-#  Outputs
-# =========
-
-output "main" {
-  value = module.cloudkube.main
+output "resource_group" {
+  value = module.cloudkube.resource_group
 }
 
-output "me" {
-  value = module.cloudkube.me
+output "storage_account" {
+  value = module.cloudkube.storage_account
+}
+
+output "container_registry" {
+  value = module.cloudkube.container_registry
 }
 
 output "DNS" {

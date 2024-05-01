@@ -26,42 +26,32 @@ resource "azurerm_key_vault" "vaults" {
 #  Certificates
 # ==============
 
-resource "azurerm_key_vault_certificate" "tls_root_certs" {
-  for_each     = var.tls_certificates
-  name         = each.value["root"].name
-  key_vault_id = "/subscriptions/${local.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.KeyVault/vaults/${var.base_name}-${each.key}-kv"
-
-  certificate {
-    contents = filebase64(each.value["root"].cert_path)
+locals {
+  dev_certificates = {
+    for cert in var.dev_certificates :
+    "dev-${cert.name}" => merge(cert, { key_vault = "cloudkube-dev-kv" })
   }
 
-  certificate_policy {
-    issuer_parameters {
-      name = "Unknown"
-    }
-
-    key_properties {
-      exportable = true
-      key_size   = 2048
-      key_type   = "RSA"
-      reuse_key  = false
-    }
-
-    secret_properties {
-      content_type = "application/x-pem-file"
-    }
+  staging_certificates = {
+    for cert in var.staging_certificates :
+    "staging-${cert.name}" => merge(cert, { key_vault = "cloudkube-staging-kv" })
   }
+
+  prod_certificates = {
+    for cert in var.prod_certificates :
+    "prod-${cert.name}" => merge(cert, { key_vault = "cloudkube-prod-kv" })
+  }
+
+  all_certificates = merge(local.dev_certificates, local.staging_certificates, local.prod_certificates)
 }
 
-# Wildcard Certificates
-
-resource "azurerm_key_vault_certificate" "tls_wildcard_certs" {
-  for_each     = var.tls_certificates
-  name         = each.value["wildcard"].name
-  key_vault_id = "/subscriptions/${local.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.KeyVault/vaults/${var.base_name}-${each.key}-kv"
+resource "azurerm_key_vault_certificate" "certs" {
+  for_each     = local.all_certificates
+  name         = each.value.name
+  key_vault_id = "/subscriptions/${local.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.KeyVault/vaults/${each.value.key_vault}"
 
   certificate {
-    contents = filebase64(each.value["wildcard"].cert_path)
+    contents = filebase64(each.value.pem_file)
   }
 
   certificate_policy {

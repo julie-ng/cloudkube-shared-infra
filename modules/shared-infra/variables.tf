@@ -12,6 +12,10 @@ variable "default_tags" {
 
 # DNS
 variable "dns_zone_name" {}
+variable "dns_a_records" {}
+variable "dns_cname_records" {}
+variable "ingress_configs" {}
+
 
 # ACR
 variable "azure_container_registry_name" {}
@@ -30,13 +34,12 @@ variable "key_vault_enable_rbac_authorization" {}
 
 # Certificates
 variable "key_vault_names" {}
-variable "tls_certificates" {
-  type    = map(map(map(string)))
-  default = {}
+variable "dev_certificates" {
+  type = list(map(string))
 }
-
-variable "dns_a_records" {}
-
-# See *.auto.tfvars
-variable "dns_cname_records" {}
-variable "ingress_configs" {}
+variable "staging_certificates" {
+  type = list(map(string))
+}
+variable "prod_certificates" {
+  type = list(map(string))
+}

@@ -1,29 +1,29 @@
-output "me" {
-  value = data.azurerm_client_config.current
-}
-
-output "main" {
+# Resource Group
+output "resource_group" {
   value = {
-    resource_group = {
-      name     = azurerm_resource_group.shared_rg.name
-      location = azurerm_resource_group.shared_rg.location
-    }
-    storage_account = {
-      name                  = azurerm_storage_account.storageacct.name
-      primary_blob_endpoint = azurerm_storage_account.storageacct.primary_blob_endpoint
-    }
-    container_registry = {
-      # id           = azurerm_container_registry.acr.id
-      sku          = azurerm_container_registry.acr.sku
-      login_server = azurerm_container_registry.acr.login_server
-    }
+    name     = azurerm_resource_group.shared_rg.name
+    location = azurerm_resource_group.shared_rg.location
   }
 }
 
-# ===========
-#  Key Vault
-# ===========
+# Storage Account
+output "storage_account" {
+  value = {
+    name                  = azurerm_storage_account.storageacct.name
+    primary_blob_endpoint = azurerm_storage_account.storageacct.primary_blob_endpoint
+  }
+}
 
+# Container Registry
+output "container_registry" {
+  value = {
+    # id           = azurerm_container_registry.acr.id
+    sku          = azurerm_container_registry.acr.sku
+    login_server = azurerm_container_registry.acr.login_server
+  }
+}
+
+# Key Vaults
 output "key_vaults" {
   value = [
     for v in azurerm_key_vault.vaults : {
@@ -35,25 +35,12 @@ output "key_vaults" {
   ]
 }
 
+# TLS Certificates
 output "tls_certificates" {
-  value = {
-    root = [for c in azurerm_key_vault_certificate.tls_root_certs : {
-      id      = c.id
-      name    = c.name
-      subject = c.certificate_policy[0].x509_certificate_properties[0].subject
-    }]
-    wildcards = [for c in azurerm_key_vault_certificate.tls_wildcard_certs : {
-      id      = c.id
-      name    = c.name
-      subject = c.certificate_policy[0].x509_certificate_properties[0].subject
-    }]
-  }
+  value = [for c in azurerm_key_vault_certificate.certs : c.id]
 }
 
-# =====
-#  DNS
-# =====
-
+# DNS - records, zone
 output "DNS" {
   value = {
     zone = {
