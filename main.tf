@@ -88,3 +88,47 @@ module "cloudkube" {
     # }
   }
 }
+
+# ======================
+#  GitHub Workflows IDs
+# ======================
+
+locals {
+  github_identities_map = {
+    for i, identity in var.github_identities :
+    "${identity.base_name}-${identity.github_env}" => identity
+  }
+}
+
+module "github_identities" {
+  source   = "./modules/github-federated-identity"
+  for_each = local.github_identities_map
+
+  base_name   = each.value.base_name
+  github_org  = each.value.github_org
+  github_repo = each.value.github_repo
+  github_env  = each.value.github_env
+
+  # MSFT Internal requirement
+  service_management_reference = var.service_management_reference
+}
+
+
+# Role Assignments on Container Registry
+data "azurerm_container_registry" "cloudkube" {
+  name                = "${var.base_name}cr"
+  resource_group_name = var.shared_rg_name
+}
+
+resource "azurerm_role_assignment" "github_federated_ids_on_acr" {
+  for_each                         = local.github_identities_map
+  role_definition_name             = "AcrPush" # "8311e382-0749-4cb8-b61a-304f252e45ec"
+  scope                            = data.azurerm_container_registry.cloudkube.id
+  principal_id                     = module.github_identities["${each.value.base_name}-${each.value.github_env}"].summary.service_principal.object_id
+  skip_service_principal_aad_check = true
+
+  depends_on = [
+    module.cloudkube,
+    module.github_identities
+  ]
+}

@@ -32,3 +32,15 @@ variable "prod_certificates" {
   type        = list(map(string))
   description = "List of certificates to save in `cloudkube-prod-kv`"
 }
+
+
+# Federated Identities for Deploymnet
+
+variable "github_identities" {
+  type = list(map(string))
+}
+
+variable "service_management_reference" {
+  type    = string
+  default = "" # set in private.auto.tfvars
+}

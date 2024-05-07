@@ -1,6 +1,19 @@
 # cloudkube.io - Shared Infrastructure
 
-[Terraform](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) Infrastructure as Code (IaC) I use to deploy and manage shared resources for cloudkube.io
+[Terraform](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) Infrastructure as Code (IaC) I use to deploy and manage shared resources for cloudkube.io.
+
+**Azure Resrouces**
+
+- 1 Container registry
+- 1 DNS Zone
+- 1 Storage Account
+- 3 Key Vaults
+- Imports TLS certs into Key Vaults
+
+**GitHub Deployment integration**
+- 2 Service Principals (SP)
+- 2 federated credentials for the above SPs for GitHub Workflows
+- 2 Role assignments to Container Registry to push from GitHub
 
 ## How to use
 

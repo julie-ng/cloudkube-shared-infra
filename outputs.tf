@@ -21,3 +21,7 @@ output "key_vaults" {
 output "tls_certificates" {
   value = module.cloudkube.tls_certificates
 }
+
+output "github_identities" {
+  value = module.github_identities
+}
