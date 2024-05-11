@@ -1,12 +1,12 @@
-# output "resource_group" {
-#   value = module.cloudkube.resource_group
-# }
-
 output "storage_account" {
-  value = module.cloudkube.storage_account
+  value = {
+    name                  = azurerm_storage_account.cloudkube.name
+    primary_blob_endpoint = azurerm_storage_account.cloudkube.primary_blob_endpoint
+  }
 }
+
 output "DNS" {
-  value = module.cloudkube.DNS
+  value = module.dns
 }
 
 output "key_vaults" {

@@ -34,24 +34,19 @@ data "azurerm_public_ip" "dev" {
 #  Shared Infra
 # ==============
 
-module "cloudkube" {
-  source = "./modules/shared-infra"
+module "dns" {
+  source = "./modules/dns"
 
   # Basics
-  base_name           = var.base_name
-  location            = var.location
+  # base_name           = var.base_name
+  # location            = var.location
   resource_group_name = var.shared_rg_name
-  default_tags        = var.default_tags
-
-  # Storage Account
-  storage_account_name             = "cloudkubestorage"
-  storage_account_tier             = "Standard"
-  storage_account_replication_type = "GRS"
+  tags                = var.default_tags
 
   # DNS Records
-  dns_zone_name     = "cloudkube.io"
-  dns_cname_records = var.dns_cname_records
-  dns_a_records = {
+  dns_zone_name = "cloudkube.io"
+  cname_records = var.dns_cname_records
+  a_records = {
     dev_cluster = {
       name    = "dev"
       records = [data.azurerm_public_ip.dev.ip_address]
@@ -162,4 +157,18 @@ module "container_registry" {
 
   managed_identity_pullers = local.registry_pullers
   github_pushers           = local.github_pushers
+}
+
+
+# =================
+#  Storage Account
+# =================
+
+resource "azurerm_storage_account" "cloudkube" {
+  name                     = "cloudkubestorage"
+  resource_group_name      = azurerm_resource_group.shared_rg.name
+  location                 = azurerm_resource_group.shared_rg.location
+  account_tier             = "Standard"
+  account_replication_type = "GRS"
+  tags                     = var.default_tags
 }

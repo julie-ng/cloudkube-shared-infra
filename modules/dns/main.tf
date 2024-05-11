@@ -1,3 +1,7 @@
+data "azurerm_resource_group" "shared_rg" {
+  name = var.resource_group_name
+}
+
 # ==========
 #  DNS Zone
 # ==========
@@ -5,12 +9,12 @@
 resource "azurerm_dns_zone" "shared_dns" {
   name                = var.dns_zone_name
   resource_group_name = data.azurerm_resource_group.shared_rg.name
-  tags                = var.default_tags
+  tags                = var.tags
 }
 
 # A Records
 resource "azurerm_dns_a_record" "records" {
-  for_each            = var.dns_a_records
+  for_each            = var.a_records
   name                = each.value.name
   zone_name           = azurerm_dns_zone.shared_dns.name
   resource_group_name = data.azurerm_resource_group.shared_rg.name
@@ -20,7 +24,7 @@ resource "azurerm_dns_a_record" "records" {
 
 # Cname Records
 resource "azurerm_dns_cname_record" "records" {
-  for_each            = var.dns_cname_records
+  for_each            = var.cname_records
   name                = each.value.name
   zone_name           = azurerm_dns_zone.shared_dns.name
   resource_group_name = data.azurerm_resource_group.shared_rg.name
@@ -28,13 +32,12 @@ resource "azurerm_dns_cname_record" "records" {
   record              = each.value.record
 }
 
-# Deal wtih it :P
+# Email Records
 resource "azurerm_dns_mx_record" "email" {
   name                = "@"
   zone_name           = azurerm_dns_zone.shared_dns.name
   resource_group_name = data.azurerm_resource_group.shared_rg.name
   ttl                 = 300
-  tags                = var.default_tags
 
   record {
     preference = 1
