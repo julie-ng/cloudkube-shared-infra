@@ -4,6 +4,16 @@
 
 data "azurerm_client_config" "current" {}
 
+# ================
+#  Resource Group
+# ================
+
+resource "azurerm_resource_group" "shared_rg" {
+  name     = var.shared_rg_name
+  location = var.location
+  tags     = var.default_tags
+}
+
 # ========================
 #  AKS Clusters Resources
 # ========================
@@ -33,26 +43,10 @@ module "cloudkube" {
   resource_group_name = var.shared_rg_name
   default_tags        = var.default_tags
 
-  # Azure Container Registry
-  azure_container_registry_name = "cloudkubecr"
-  azure_container_registry_sku  = "Basic"
-
   # Storage Account
   storage_account_name             = "cloudkubestorage"
   storage_account_tier             = "Standard"
   storage_account_replication_type = "GRS"
-
-  # Key Vault Defaults
-  key_vault_names                      = var.key_vault_names
-  key_vault_sku                        = var.key_vault_sku
-  key_vault_enable_rbac_authorization  = var.key_vault_enable_rbac_authorization
-  key_vault_purge_protection_enabled   = var.key_vault_purge_protection_enabled
-  key_vault_soft_delete_retention_days = var.key_vault_soft_delete_retention_days
-
-  # tls_certificates = var.tls_certificates
-  dev_certificates     = var.dev_certificates
-  staging_certificates = var.staging_certificates
-  prod_certificates    = var.prod_certificates
 
   # DNS Records
   dns_zone_name     = "cloudkube.io"
@@ -75,36 +69,17 @@ module "cloudkube" {
     #   records = [data.azurerm_public_ip.staging.ip_address]
     # }
   }
-
-  # TLS certificate config
-  ingress_configs = {
-    dev = {
-      ingress_user_mi_name = "cloudkube-dev-${var.dev_suffix}-kubelet-mi"
-      ingress_user_mi_rg   = "cloudkube-dev-${var.dev_suffix}-rg"
-    }
-    # staging = {
-    #   ingress_user_mi_name = "cloudkube-staging-${var.staging_suffix}-kubelet-mi"
-    #   ingress_user_mi_rg   = "cloudkube-staging-${var.staging_suffix}-rg"
-    # }
-  }
 }
 
 # ======================
 #  GitHub Workflows IDs
 # ======================
 
-locals {
-  github_identities_map = {
-    for i, identity in var.github_identities :
-    "${identity.base_name}-${identity.github_env}" => identity
-  }
-}
-
 module "github_identities" {
   source   = "./modules/github-federated-identity"
-  for_each = local.github_identities_map
+  for_each = var.github_identities
 
-  base_name   = each.value.base_name
+  base_name   = each.value.base_name # SP & credential base name
   github_org  = each.value.github_org
   github_repo = each.value.github_repo
   github_env  = each.value.github_env
@@ -113,22 +88,78 @@ module "github_identities" {
   service_management_reference = var.service_management_reference
 }
 
+# =========================
+#  Consolidated Identities
+# =========================
+# because can't use variables in .tfvars
 
-# Role Assignments on Container Registry
-data "azurerm_container_registry" "cloudkube" {
-  name                = "${var.base_name}cr"
-  resource_group_name = var.shared_rg_name
+locals {
+  dev_identtiies = {
+    kubelet = {
+      identity_name  = "cloudkube-dev-${var.dev_suffix}-kubelet-mi"
+      resource_group = "cloudkube-dev-${var.dev_suffix}-rg"
+    }
+    ingress_mi = {
+      identity_name  = "cloudkube-dev-${var.dev_suffix}-ingress-mi"
+      resource_group = "cloudkube-dev-${var.dev_suffix}-rg"
+    }
+  }
 }
 
-resource "azurerm_role_assignment" "github_federated_ids_on_acr" {
-  for_each                         = local.github_identities_map
-  role_definition_name             = "AcrPush" # "8311e382-0749-4cb8-b61a-304f252e45ec"
-  scope                            = data.azurerm_container_registry.cloudkube.id
-  principal_id                     = module.github_identities["${each.value.base_name}-${each.value.github_env}"].summary.service_principal.object_id
-  skip_service_principal_aad_check = true
+# ===========
+#  Key Vault
+# ===========
 
-  depends_on = [
-    module.cloudkube,
-    module.github_identities
-  ]
+# Make sure keys are always 'dev', 'staging', 'prod'
+
+locals {
+  kv_certificates = {
+    dev     = var.dev_certificates
+    staging = var.staging_certificates
+    prod    = var.prod_certificates
+  }
+
+  kv_assignments = {
+    dev     = local.dev_identtiies
+    staging = {}
+    prod    = {}
+  }
+}
+
+module "key_vaults" {
+  source             = "./modules/key-vault"
+  for_each           = var.key_vault_names
+  name               = each.value
+  resource_group     = var.shared_rg_name
+  tags               = var.default_tags
+  certificates       = local.kv_certificates[each.key]
+  reader_assignments = local.kv_assignments[each.key]
+}
+
+# ====================
+#  Container Registry
+# ====================
+
+locals {
+  dev_pullers = {
+    for key, identity in local.dev_identtiies :
+    "dev-${key}" => identity
+  }
+
+  # add more later when we have more clusters
+  registry_pullers = merge({}, local.dev_pullers)
+
+  github_pushers = {
+    for k, identity in module.github_identities :
+    "${k}" => identity.service_principal
+  }
+}
+
+module "container_registry" {
+  source         = "./modules/container-registry"
+  name           = "cloudkubecr"
+  resource_group = var.shared_rg_name
+
+  managed_identity_pullers = local.registry_pullers
+  github_pushers           = local.github_pushers
 }

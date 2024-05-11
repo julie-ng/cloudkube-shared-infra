@@ -1,6 +1,11 @@
-# =====
-#  Dev
-# =====
+key_vault_names = {
+  dev     = "cloudkube-dev-kv"
+  staging = "cloudkube-staging-kv"
+  prod    = "cloudkube-prod-kv"
+}
+
+# Dev Certs
+# =========
 
 dev_certificates = [
   {
@@ -17,9 +22,8 @@ dev_certificates = [
   }
 ]
 
-# =========
-#  Staging
-# ==========
+# Staging Certs
+# =============
 
 staging_certificates = [
   {
@@ -32,9 +36,9 @@ staging_certificates = [
   }
 ]
 
-# ============
-#  Production
-# ============
+
+# Prod Certs
+# ==========
 
 prod_certificates = [
   {
