@@ -17,7 +17,7 @@ dev_certificates = [
     pem_file = "./certs/2024/combined_star_dev_cloudkube_io.pem"
   },
   {
-    name     = "aks-cheatsheets"
+    name     = "dev-aks-cheatsheets"
     pem_file = "./certs/2024/combined_dev_aks_cheatsheets_dev.pem"
   }
 ]
