@@ -86,7 +86,7 @@ module "github_identities" {
 # =========================
 #  Consolidated Identities
 # =========================
-# because can't use variables in .tfvars
+# because can't use variable interpolation in .tfvars
 
 locals {
   dev_identtiies = {
@@ -95,7 +95,15 @@ locals {
       resource_group = "cloudkube-dev-${var.dev_suffix}-rg"
     }
     ingress_mi = {
-      identity_name  = "cloudkube-dev-${var.dev_suffix}-ingress-mi"
+      identity_name  = "ingress-${var.dev_suffix}-workload-mi"
+      resource_group = "cloudkube-dev-${var.dev_suffix}-rg"
+    }
+    hello_world_mi = {
+      identity_name  = "hello-world-${var.dev_suffix}-workload-mi"
+      resource_group = "cloudkube-dev-${var.dev_suffix}-rg"
+    }
+    aks_cheatsheets_mi = {
+      identity_name  = "aks-cheatsheets-${var.dev_suffix}-workload-mi"
       resource_group = "cloudkube-dev-${var.dev_suffix}-rg"
     }
   }
