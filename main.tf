@@ -171,4 +171,8 @@ resource "azurerm_storage_account" "cloudkube" {
   account_tier             = "Standard"
   account_replication_type = "GRS"
   tags                     = var.default_tags
+
+  # Per MSFT policy
+  allow_nested_items_to_be_public = false
+  shared_access_key_enabled       = false
 }
